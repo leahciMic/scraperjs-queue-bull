@@ -1,0 +1,10 @@
+language: node_js
+services:
+  - redis
+node_js:
+  - "node"
+  - "5"
+  - "4"
+addons:
+    code_climate:
+        repo_token: 
