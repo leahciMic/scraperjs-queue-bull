@@ -7,7 +7,7 @@ describe('queue-bull', () => {
   let queue;
 
   beforeEach(() => {
-    process.env.PRIORITY_QUEUE = false; //!Boolean(process.env.PRIORITY_QUEUE);
+    process.env.PRIORITY_QUEUE = !Boolean(process.env.PRIORITY_QUEUE);
     queue = queueBull('test');
   });
 
