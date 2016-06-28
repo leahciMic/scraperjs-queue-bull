@@ -34,7 +34,7 @@ describe('queue-bull', () => {
     expect(count).to.equal(1);
   });
 
-  it('should be able to process items in queue', () => async () => {
+  it('should be able to process items in queue', async () => {
     await queue.add(QUEUE_ITEM);
     return new Promise((resolve) => {
       queue.process((job) => {
@@ -46,7 +46,7 @@ describe('queue-bull', () => {
     });
   });
 
-  it('should be able to process items in queue (callback)', () => async () => {
+  it('should be able to process items in queue (callback)', async () => {
     await queue.add(QUEUE_ITEM);
     return new Promise((resolve) => {
       queue.process((job, done) => {
