@@ -9,16 +9,22 @@ bluebird.promisifyAll(redis.Multi.prototype);
 const REDIS_PORT = process.env.REDIS_PORT || 6379;
 const REDIS_HOST = process.env.REDIS_HOST || '127.0.0.1';
 
-function createClient() {
-  return redis.createClient({
-    host: REDIS_HOST,
-    port: REDIS_PORT,
-  });
-}
+const redisClient = redis.createClient({
+  host: REDIS_HOST,
+  port: REDIS_PORT,
+});
 
 const KEY_PREFIX = 'scraper.js-queue-bull-url-cache';
 
-export default function createBullQueue(name, redisClient = createClient) {
+function getKey(queueItem) {
+  return `${KEY_PREFIX}:(${queueItem.url})`;
+}
+
+export function removeCache(queueItem) {
+  return redisClient.delAsync(getKey(queueItem));
+}
+
+export default function createBullQueue(name) {
   const createQueue = process.env.PRIORITY_QUEUE ? createPriorityQueue : createNormalQueue;
   const queue = createQueue(name, REDIS_PORT, REDIS_HOST);
 
@@ -28,6 +34,9 @@ export default function createBullQueue(name, redisClient = createClient) {
       const promiseWrapper = job => fn(job.data);
 
       queue.process(fn.length === 2 ? callbackWrapper : promiseWrapper);
+    },
+    empty() {
+      return queue.empty();
     },
     async add(queueItem, {
       expiry = 86400000,
@@ -44,7 +53,7 @@ export default function createBullQueue(name, redisClient = createClient) {
           attempts,
           backoff,
         });
-        await redisClient.setpxAsync(key, expiry);
+        await redisClient.expireAsync(key, Math.ceil(expiry / 1000));
         return true;
       }
 
