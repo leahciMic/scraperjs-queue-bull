@@ -1,26 +1,35 @@
 {
   "name": "scraper.js-queue-bull",
-  "version": "0.2.0",
-  "description": "a bull backed queue plugin for scraper.js",
+  "version": "1.0.0",
+  "description": "A queue plugin for Scraper.js that is backed by Bull",
   "main": "dist/queue-bull.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ./src",
+    "unit": "NODE_ENV=test mocha --reporter spec --compilers js:babel-core/register",
+    "test": "npm run lint && nyc --reporter lcov npm run unit && codeclimate-test-reporter < ./coverage/lcov.info",
     "prepublish": "rm -rf ./dist && babel -d ./dist ./src"
   },
   "repository": "leahcimic/scraperjs-queue-bull",
   "author": "Michael Leaney <leahcimic@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "bull": "^1.0.0-rc1"
+    "bluebird": "^3.4.1",
+    "bull": "^1.0.0",
+    "redis": "^2.6.2"
   },
   "devDependencies": {
-    "babel-generator": "^6.7.7",
-    "babel-helpers": "^6.6.0",
+    "babel-eslint": "^6.1.0",
+    "babel-generator": "^6.11.0",
+    "babel-helpers": "^6.8.0",
     "babel-loader": "^6.2.4",
-    "babel-preset-es2015": "^6.6.0",
-    "eslint": "^2.8.0",
-    "eslint-config-airbnb": "^8.0.0",
-    "eslint-config-airbnb-base": "^1.0.4",
-    "eslint-plugin-import": "^1.6.1"
+    "babel-plugin-__coverage__": "^11.0.0",
+    "babel-preset-es2015": "^6.9.0",
+    "codeclimate-test-reporter": "^0.3.3",
+    "eslint": "^2.13.1",
+    "eslint-config-airbnb-base": "^3.0.1",
+    "eslint-plugin-import": "^1.9.2",
+    "mocha": "^2.5.3",
+    "nyc": "^6.6.1",
+    "redis-mock": "^0.9.0"
   }
 }
