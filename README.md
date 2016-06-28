@@ -1,8 +1,8 @@
 # A queue plugin for Scraper.js that is backed by Bull
-[![Build Status](https://travis-ci.org/leahciMic/scraper-queue-bull.svg?branch=master)](https://travis-ci.org/leahciMic/scraper-queue-bull)
-[![Code Climate](https://codeclimate.com/github/leahciMic/scraper-queue-bull/badges/gpa.svg)](https://codeclimate.com/github/leahciMic/scraper-queue-bull)
-[![Test Coverage](https://codeclimate.com/github/leahciMic/scraper-queue-bull/badges/coverage.svg)](https://codeclimate.com/github/leahciMic/scraper-queue-bull/coverage)
-[![Issue Count](https://codeclimate.com/github/leahciMic/scraper-queue-bull/badges/issue_count.svg)](https://codeclimate.com/github/leahciMic/scraper-queue-bull)
+[![Build Status](https://travis-ci.org/leahciMic/scraperjs-queue-bull.svg?branch=master)](https://travis-ci.org/leahciMic/scraperjs-queue-bull)
+[![Code Climate](https://codeclimate.com/github/leahciMic/scraperjs-queue-bull/badges/gpa.svg)](https://codeclimate.com/github/leahciMic/scraperjs-queue-bull)
+[![Test Coverage](https://codeclimate.com/github/leahciMic/scraperjs-queue-bull/badges/coverage.svg)](https://codeclimate.com/github/leahciMic/scraperjs-queue-bull/coverage)
+[![Issue Count](https://codeclimate.com/github/leahciMic/scraperjs-queue-bull/badges/issue_count.svg)](https://codeclimate.com/github/leahciMic/scraperjs-queue-bull)
 [![Dependency Status](https://www.versioneye.com/user/projects/57730f02752cd10042009d5c/badge.svg?style=flat)](https://www.versioneye.com/user/projects/57730f02752cd10042009d5c)
 ## Methods
 
