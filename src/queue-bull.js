@@ -45,9 +45,10 @@ export default function createBullQueue(name, redisClient = createClient) {
           backoff,
         });
         await redisClient.setpxAsync(key, expiry);
+        return true;
       }
 
-      return true;
+      return false;
     },
     count() {
       return queue.count();
