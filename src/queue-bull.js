@@ -67,3 +67,7 @@ export default function createBullQueue(name) {
     },
   };
 }
+
+if (module) {
+  module.exports = createBullQueue;
+}
