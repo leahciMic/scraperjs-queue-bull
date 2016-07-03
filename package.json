@@ -1,6 +1,6 @@
 {
   "name": "scraper.js-queue-bull",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A queue plugin for Scraper.js that is backed by Bull",
   "main": "dist/queue-bull.js",
   "scripts": {
