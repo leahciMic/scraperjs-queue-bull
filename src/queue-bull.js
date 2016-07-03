@@ -40,7 +40,7 @@ export default function createBullQueue(name) {
     },
     async add(queueItem, {
       expiry = 86400000,
-      priority = 'high',
+      priority = 'normal',
       attempts = 2,
       backoff = 3600000,
      } = {}) {
