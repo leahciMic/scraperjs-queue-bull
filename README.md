@@ -33,3 +33,8 @@ Close everything.
 * More documentation.
 * Tests.
 * Remove environment variables, and pass these things in from scraper.js.
+
+
+## Changelog
+
+2.0.0 - Remove options, extract them from a queueItem instead

@@ -38,12 +38,15 @@ export default function createBullQueue(name) {
     empty() {
       return queue.empty();
     },
-    async add(queueItem, {
-      expiry = 86400000,
-      priority = 'normal',
-      attempts = 2,
-      backoff = 3600000,
-     } = {}) {
+    async add(queueItem) {
+      const {
+        expiry = 86400000,
+        priority = 'normal',
+        attempts = 2,
+        backoff = 3600000,
+      } = queueItem;
+
+       // @todo was doing: removing options paramater and combining it with the queueItem
       const key = `${KEY_PREFIX}:(${queueItem.url})`;
       const saved = await redisClient.setnxAsync(key, 'true');
 
