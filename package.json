@@ -1,6 +1,6 @@
 {
   "name": "scraper.js-queue-bull",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "A queue plugin for Scraper.js that is backed by Bull",
   "main": "dist/queue-bull.js",
   "scripts": {
@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.4.6",
-    "bull": "^1.1.2",
+    "bull": "leahciMic/bull#Add-support-for-rate-limiting",
     "redis": "^2.6.3"
   },
   "devDependencies": {
