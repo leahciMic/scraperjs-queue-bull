@@ -39,3 +39,4 @@ Close everything.
 
 2.0.0 - Remove options, extract them from a queueItem instead
 3.0.0 - Add options to process()
+3.0.2 - Add removeOnComplete to save space in Redis

@@ -41,6 +41,7 @@ export default function createBullQueue(name) {
         priority = 'normal',
         attempts = 2,
         backoff = 3600000,
+        removeOnComplete = true,
       } = queueItem;
 
        // @todo was doing: removing options paramater and combining it with the queueItem
@@ -52,6 +53,7 @@ export default function createBullQueue(name) {
           priority,
           attempts,
           backoff,
+          removeOnComplete,
         });
         await redisClient.expireAsync(key, Math.ceil(expiry / 1000));
         return true;
