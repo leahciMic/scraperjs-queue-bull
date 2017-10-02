@@ -1,7 +1,6 @@
-import createNormalQueue from 'bull';
-import createPriorityQueue from 'bull/lib/priority-queue';
-import redis from 'redis';
-import bluebird from 'bluebird';
+const bull = require('bull');
+const redis = require('redis');
+const bluebird = require('bluebird');
 
 bluebird.promisifyAll(redis.RedisClient.prototype);
 bluebird.promisifyAll(redis.Multi.prototype);
@@ -20,17 +19,16 @@ function getKey(queueItem) {
   return `${KEY_PREFIX}:(${queueItem.url})`;
 }
 
-export function removeCache(queueItem) {
+function removeCache(queueItem) {
   return redisClient.delAsync(getKey(queueItem));
 }
 
-export default function createBullQueue(name) {
-  const createQueue = process.env.PRIORITY_QUEUE ? createPriorityQueue : createNormalQueue;
-  const queue = createQueue(name, REDIS_PORT, REDIS_HOST);
+function createBullQueue(name) {
+  const queue = bull(name, `redis://${REDIS_HOST}:${REDIS_PORT}`);
 
   return {
-    process(options, fn) {
-      queue.process(options, job => fn(job.data, job));
+    process(fn) {
+      queue.process(job => fn(job.data, job));
     },
     empty() {
       return queue.empty();
@@ -38,13 +36,13 @@ export default function createBullQueue(name) {
     async add(queueItem) {
       const {
         expiry = 86400000,
-        priority = 'normal',
+        priority = 10,
         attempts = 2,
         backoff = 3600000,
         removeOnComplete = true,
       } = queueItem;
 
-       // @todo was doing: removing options paramater and combining it with the queueItem
+      // @todo was doing: removing options paramater and combining it with the queueItem
       const key = `${KEY_PREFIX}:(${queueItem.url})`;
       const saved = await redisClient.setnxAsync(key, 'true');
 
@@ -69,3 +67,8 @@ export default function createBullQueue(name) {
     },
   };
 }
+
+module.exports = {
+  createQueue: createBullQueue,
+  removeCache,
+};
