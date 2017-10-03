@@ -1,9 +1,7 @@
 const bull = require('bull');
 const redis = require('redis');
-const bluebird = require('bluebird');
-
-bluebird.promisifyAll(redis.RedisClient.prototype);
-bluebird.promisifyAll(redis.Multi.prototype);
+const nodeSha1 = require('node-sha1');
+const { promisify } = require('util');
 
 const REDIS_PORT = process.env.REDIS_PORT || 6379;
 const REDIS_HOST = process.env.REDIS_HOST || '127.0.0.1';
@@ -15,36 +13,38 @@ const redisClient = redis.createClient({
 
 const KEY_PREFIX = 'scraper.js-queue-bull-url-cache';
 
-function getKey(queueItem) {
-  return `${KEY_PREFIX}:(${queueItem.url})`;
-}
-
-function removeCache(queueItem) {
-  return redisClient.delAsync(getKey(queueItem));
-}
-
-function createBullQueue(name) {
+function createBullQueue(name, { expiry = 259200 } = {}) {
   const queue = bull(name, `redis://${REDIS_HOST}:${REDIS_PORT}`);
 
   return {
     process(fn) {
       queue.process(job => fn(job.data, job));
     },
-    empty() {
+    async empty() {
+      await promisify(redisClient.del)(`${KEY_PREFIX}:name`);
       return queue.empty();
     },
     async add(queueItem) {
       const {
-        expiry = 86400000,
+        expiry: itemExpiry,
         priority = 10,
-        attempts = 2,
-        backoff = 3600000,
+        attempts = 3,
+        backoff = {
+          type: 'exponential',
+          delay: 3600000,
+        },
         removeOnComplete = true,
       } = queueItem;
 
+      if (itemExpiry) {
+        // eslint-disable-next-line no-console
+        console.warn('scraper.js-queue-bull: Setting an expiry on an individual queueItem is no longer accepted. The entire queue must share an expiry');
+      }
+
       // @todo was doing: removing options paramater and combining it with the queueItem
-      const key = `${KEY_PREFIX}:(${queueItem.url})`;
-      const saved = await redisClient.setnxAsync(key, 'true');
+
+      const key = `${KEY_PREFIX}:name`;
+      const saved = await promisify(redisClient.sadd)(key, nodeSha1(queueItem.url));
 
       if (saved === 1) {
         await queue.add(queueItem, {
@@ -53,7 +53,7 @@ function createBullQueue(name) {
           backoff,
           removeOnComplete,
         });
-        await redisClient.expireAsync(key, Math.ceil(expiry / 1000));
+        await promisify(redisClient.expire)(key, Math.ceil(expiry / 1000));
         return true;
       }
 
@@ -70,5 +70,4 @@ function createBullQueue(name) {
 
 module.exports = {
   createQueue: createBullQueue,
-  removeCache,
 };
