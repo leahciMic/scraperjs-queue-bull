@@ -13,7 +13,7 @@ const redisClient = redis.createClient({
 
 const KEY_PREFIX = 'scraper.js-queue-bull-url-cache';
 
-function createBullQueue(name, { expiry = 259200 } = {}) {
+function createBullQueue(name, { expiry = 604800 } = {}) {
   const queue = bull(name, `redis://${REDIS_HOST}:${REDIS_PORT}`);
 
   return {
@@ -21,7 +21,7 @@ function createBullQueue(name, { expiry = 259200 } = {}) {
       queue.process(job => fn(job.data, job));
     },
     async empty() {
-      await promisify(redisClient.del)(`${KEY_PREFIX}:name`);
+      await promisify(redisClient.del.bind(redisClient))(`${KEY_PREFIX}:${name}`);
       return queue.empty();
     },
     async add(queueItem) {
@@ -43,8 +43,8 @@ function createBullQueue(name, { expiry = 259200 } = {}) {
 
       // @todo was doing: removing options paramater and combining it with the queueItem
 
-      const key = `${KEY_PREFIX}:name`;
-      const saved = await promisify(redisClient.sadd)(key, nodeSha1(queueItem.url));
+      const key = `${KEY_PREFIX}:${name}`;
+      const saved = await promisify(redisClient.sadd.bind(redisClient))(key, nodeSha1(queueItem.url));
 
       if (saved === 1) {
         await queue.add(queueItem, {
@@ -53,7 +53,7 @@ function createBullQueue(name, { expiry = 259200 } = {}) {
           backoff,
           removeOnComplete,
         });
-        await promisify(redisClient.expire)(key, Math.ceil(expiry / 1000));
+        await promisify(redisClient.expire.bind(redisClient))(key, Math.ceil(expiry / 1000));
         return true;
       }
 
